@@ -1,0 +1,245 @@
+---
+title: "Week 1 · Class 1: Practice Exercises"
+subtitle: "Introduction to Quantitative Political Analysis"
+date: "2026"
+format:
+  pdf:
+    toc: false
+    number-sections: true
+    colorlinks: true
+---
+
+```{r}
+#| include: false
+library(tidyverse)
+library(knitr)
+library(formatR)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = FALSE)
+```
+
+# Segment A — Introduction to Quantitative Political Analysis
+```{r echo=F, include=F}
+library(knitr)
+library(formatR)
+library(tidyverse)
+args <- commandArgs(trailingOnly = FALSE)
+script <- sub("^--file=", "", args[grep("^--file=", args)])
+setwd(dirname(normalizePath(script)))
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = FALSE)
+```
+
+# Non-AI Exercises
+
+*Answer the following in a few sentences each. There are no trick questions — I want your honest thinking. These are graded on effort.*
+
+## 1. The Purpose of This Course
+
+In your own words, what is *quantitative* political analysis, and why might it matter even for someone who never works in politics professionally?
+
+Answer:
+
+\vspace{2cm}
+
+## 2. Why Scientific Testing Is Important
+
+Why is systematically testing an idea against data more reliable than trusting intuition or "conventional wisdom"? You may use an example (such as Dr. John Snow and the 1854 cholera outbreak) to illustrate your point.
+
+Answer:
+
+\vspace{2cm}
+
+## 3. The Role of AI in This Class
+
+In this course, AI handles much of the technical work of writing code. What does that free *you* to focus on, and why might those skills be more valuable than memorizing syntax?
+
+Answer:
+
+\vspace{2cm}
+
+## 4. Responsible Use of AI
+
+AI is powerful but not infallible. Describe **two** ways an AI could produce an answer that is technically correct but still misleading, and explain why you should always verify what the AI gives you.
+
+Answer:
+
+\newpage
+
+# AI Exercises
+
+> **Before you start:** Some of these tasks ask you to do things in R that you haven't learned yet — and that's on purpose. You are **not** expected to already know how to write this code. Your job is to work *with* Claude to get there, and to pay attention to what the code does. Don't worry if it feels unfamiliar — **we will cover all of this in depth in the coming weeks.** These exercises are graded on **effort, not correctness**, so experiment, make mistakes, and focus on learning.
+
+**Tips for Working with Claude:**
+
+- Ask for **R code using only tidyverse** (no other packages)
+- Request **simple, focused answers** to your specific question—not complex analyses
+- Ask Claude to **explain what the code is doing** since you're learning
+- Avoid asking for visualizations or plots in these exercises
+- Include the output of `glimpse()` in your prompt so Claude knows your variable names
+
+**Example prompt:** "Using tidyverse in R, calculate the mean age. Keep the code simple and explain what each line does. Here is what my data looks like: [paste glimpse output]"
+
+## 5. National Political Attitudes
+
+**Dataset: data/nat_pol_attitudes.csv**
+
+**Description**: Simulates a nationally representative survey measuring political attitudes, ideology, and demographics.
+
+**Variables**:
+
+- `respondent_id`: Unique respondent ID (int)
+- `age`: Age in years, 18-90 (int)
+- `gender`: male, female, nonbinary (factor)
+- `race_ethnicity`: White, Black, Latino, Asian, Other (factor)
+- `education`: Less than HS, HS, Some College, BA, Postgrad (ordered)
+- `income_bracket`: Ten brackets from <$10k to >$200k (ordered)
+- `ideology`: 1 (very liberal) to 7 (very conservative) (int)
+- `party_id`: Democrat, Republican, Independent, Other (factor)
+- `trust_gov`: 0-10 political trust scale (int)
+- `policy_support_env`: Support for environmental regulation, 0/1 (binary)
+- `policy_support_guns`: Support for stricter gun laws, 0/1 (binary)
+
+### 5.1 Load the Data
+
+We'll start at the very beginning: getting the data into R and taking a first look at it.
+
+```{r}
+# Load the dataset
+nat_pol_attitudes <- read_csv("data/nat_pol_attitudes.csv")
+
+# Explore the structure of the data
+glimpse(nat_pol_attitudes)
+```
+
+### 5.2 Average Age
+
+Ask Claude to help you calculate the **average (mean) age** of all respondents in the dataset.
+
+```{r}
+
+```
+
+### 5.3 Average Age by Party
+
+Now build on that. Ask Claude to calculate the **average age separately for each party** (`party_id`). How do the parties compare?
+
+```{r}
+
+```
+
+### 5.4 Average Trust in Government by Party
+
+Using the same idea, ask Claude to calculate the **average `trust_gov` score for each party**. Which party trusts government the most?
+
+```{r}
+
+```
+
+### 5.5 Support for Environmental Regulation
+
+`policy_support_env` is 0/1 (1 = supports the policy). The **average of a 0/1 variable is a rate** — the share of people who support it. Ask Claude to calculate the **overall share of respondents who support environmental regulation**.
+
+```{r}
+
+```
+
+### 5.6 Gun-Law Support by Party
+
+Ask Claude to calculate the **share who support stricter gun laws** (`policy_support_guns`) **for each party**. (Look closely at the result — does the pattern match what you expected? Keep this in mind for the next dataset.)
+
+```{r}
+
+```
+
+## 6. Election Returns by Precinct
+
+**Dataset: data/precinct_elections.csv**
+
+**Description**: Precinct-level election returns with demographics.
+
+**Variables**:
+
+- `state`: Two-letter state abbreviation (factor)
+- `county`: County name (string)
+- `precinct_id`: Unique precinct identifier (int)
+- `year`: Election year (int)
+- `reg_voters`: Number of registered voters (int)
+- `turnout`: Number of voters who turned out (count) (int)
+- `dem_votes`: Democratic candidate votes (int)
+- `rep_votes`: Republican candidate votes (int)
+- `median_income`: Precinct median household income (num)
+- `pct_bachelor`: Percentage with bachelor's degree (num)
+- `race_black`: Percentage Black population (num)
+- `race_hispanic`: Percentage Hispanic population (num)
+
+### 6.1 Load the Data
+
+```{r}
+# Load the dataset
+precinct_elections <- read_csv("data/precinct_elections.csv")
+
+# Examine the data
+glimpse(precinct_elections)
+```
+
+### 6.2 Average Turnout Rate
+
+The `turnout` column is a **count** of voters, not a percentage. To get a turnout *rate*, divide it by the number of registered voters: `turnout / reg_voters`. Ask Claude to calculate the **average turnout rate across all precincts**.
+
+```{r}
+
+```
+
+### 6.3 Turnout Rate by Income
+
+Do richer precincts vote at higher rates? Ask Claude to split precincts into **four groups by `median_income`** (income quartiles) and calculate the **average turnout rate within each group**. What do you find?
+
+```{r}
+
+```
+
+## 7. Congressional Press Releases
+
+**Dataset: data/congress_press.csv**
+
+**Description**: Corpus of press releases issued by U.S. legislators.
+
+**Variables**:
+
+- `release_id`: Unique press-release ID (int)
+- `member_id`: Legislator ID (int)
+- `chamber`: House, Senate (factor)
+- `party`: Democrat, Republican, Independent (factor)
+- `ideology_score`: DW-NOMINATE first dimension (num)
+- `state`: Two-letter abbreviation (factor)
+- `date`: Release date (date)
+- `topic`: Ten topics like Health, Economy, Foreign Policy, etc. (factor)
+- `sentiment_score`: -1 to 1 sentiment scale (num)
+- `contains_attack`: Indicator of partisan attack language (binary)
+
+### 7.1 Load the Data
+
+```{r}
+# Load the dataset
+congress_press <- read_csv("data/congress_press.csv")
+
+# Look at the data structure
+glimpse(congress_press)
+```
+
+### 7.2 Attack-Language Rate by Party
+
+`contains_attack` is 0/1, so its average is a rate. Ask Claude to calculate the **share of press releases that contain attack language, for each party**. Which party uses attack language most often in this data?
+
+```{r}
+
+```
+
+### 7.3 Average Sentiment by Party
+
+Finally, ask Claude to calculate the **average `sentiment_score` for each party**. Are the differences large or small?
+
+```{r}
+
+```
+
+\newpage
