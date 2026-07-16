@@ -4,3 +4,6 @@
 # Student-rendered exercise output (created locally when students render the .qmd)
 exercise_Week*_Class*.pdf
 !exercise_Week*_Class*_key.pdf
+
+# Lecture image assets (kept locally, not distributed)
+Week 4/Class 1 (07-15) Transforming Variables and Causality/images/
