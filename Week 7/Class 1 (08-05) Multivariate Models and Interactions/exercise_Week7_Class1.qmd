@@ -1,0 +1,741 @@
+---
+title: "Week 7 · Class 1: Practice Exercises"
+subtitle: "Multivariate Models & Categorical Predictors and Interactions"
+date: "2026"
+format:
+  pdf:
+    toc: false
+    number-sections: true
+    colorlinks: true
+---
+
+```{r}
+#| include: false
+library(tidyverse)
+library(knitr)
+library(formatR)
+# When running chunks interactively, set the working directory to this file's
+# folder so the relative data/ paths resolve. (During render, knitr already
+# uses the document's directory, so this is skipped.)
+if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+  .doc_path <- rstudioapi::getSourceEditorContext()$path
+  if (length(.doc_path) == 1 && nzchar(.doc_path)) setwd(dirname(.doc_path))
+}
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = FALSE)
+```
+
+# Segment A — Multivariate Models
+
+# Non-AI Exercises
+
+## 1. Understanding Multivariate Regression
+
+### 1.1 Multiple Choice: Why Control Variables?
+
+Why do we include control variables in regression models?
+
+a) To make the model more complex
+b) To isolate the effect of our variable of interest
+c) To increase R-squared
+d) To reduce sample size
+
+Answer: _____
+
+### 1.2 Fill in the Blanks: Multiple Regression
+
+In the equation Y = β₀ + β₁X₁ + β₂X₂ + ε:
+
+1. β₁ represents the effect of X₁ holding _____ constant
+2. This is called the _____ effect of X₁
+3. β₀ is the predicted Y when both X₁ and X₂ equal _____
+4. Adding X₂ helps control for _____ variables
+5. The model assumes X₁ and X₂ have _____ effects
+
+Word bank: X₂, partial, zero, confounding, additive
+
+### 1.3 True or False: Multivariate Models
+
+Mark each statement as True (T) or False (F):
+
+_____ Control variables must be correlated with the outcome  
+_____ Adding controls always improves causal inference  
+_____ Multivariate models can have multiple independent variables   
+_____ We should control for every available variable  
+
+## 2. Simpson's Paradox
+
+### 2.1 Match: Simpson's Paradox Examples
+
+Match each scenario with what it demonstrates:
+
+**Scenarios:**
+
+a) Overall correlation reverses within subgroups
+b) Aggregated data hides important patterns
+c) A third variable explains the relationship
+d) Different groups have different relationships
+
+**Concepts:**
+
+1. Simpson's Paradox
+2. Confounding
+3. Heterogeneous effects
+4. Aggregation bias
+
+Matches: a = _____, b = _____, c = _____, d = _____
+
+### 2.2 Code Detective: Controlling
+
+What does this regression control for?
+
+```r
+model <- lm(conflicts ~ military_spending + regime_type + gdp_per_capita, 
+            data = country_data)
+```
+
+This model controls for: _____
+
+### 2.3 Multiple Choice: Interpretation
+
+In a model with Y = 50 + 2X₁ - 3X₂, what does the coefficient -3 mean?
+
+a) X₂ has a negative correlation with Y
+b) Holding X₁ constant, a one-unit increase in X₂ decreases Y by 3
+c) X₂ is three times less important than X₁
+d) The model fit is poor
+
+Answer: _____
+
+## 3. Model Building
+
+### 3.1 Fill in the Code: Adding Controls
+
+Complete this code to build models progressively:
+
+```r
+# Simple model
+model1 <- lm(outcome ~ treatment, data = data)
+
+# Add one control (age)
+model2 <- lm(outcome ~ treatment + _____, data = data)
+
+# Add multiple controls (age + sex)
+model3 <- lm(outcome ~ treatment + _____ + _____, data = data)
+
+```
+
+### 3.2 Match: Variable Selection
+
+Match each criterion with its purpose:
+
+**Criteria:**
+
+a) Theory-driven selection
+b) Statistical significance
+c) Change in main coefficient
+d) Model fit (R²)
+
+**Purposes:**
+
+1. See if controls affect our main relationship
+2. Choose variables based on prior knowledge
+3. Maximize explained variance
+4. Include only "significant" predictors
+
+Matches: a = _____, b = _____, c = _____, d = _____
+
+### 3.3 Spot the Error: Bad Controls
+
+What's wrong with this model?
+
+```r
+# Predicting election outcome
+lm(won_election ~ campaign_spending + votes_received, data = election_data)
+```
+
+Problem: _____
+
+## 4. Interpreting Multivariate Results
+
+### 4.1 True or False: Coefficient Changes
+
+When adding a control variable:
+
+_____ The main coefficient always decreases  
+_____ A large change suggests confounding  
+_____ No change means the control is unimportant  
+_____ The sign can flip from positive to negative  
+_____ Standard errors always increase
+
+### 4.2 Multiple Choice: Partial Effects
+
+"Holding all else constant" means:
+
+a) Other variables don't matter
+b) We're comparing units with the same values on control variables
+c) The controls are fixed at their means
+d) There's no variation in control variables
+
+Answer: _____
+
+### 4.3 Multiple Choice: R² vs. Adjusted R²
+
+Model A uses 3 predictors: R² = 0.42, adjusted R² = 0.40. Model B adds 5 more predictors: R² = 0.45, but adjusted R² falls to 0.38. Which conclusion is best?
+
+a) Model B fits better — always prefer the higher R²
+b) The extra predictors add little beyond chance; adjusted R² penalizes them, so prefer Model A
+c) Both metrics agree that Model B is better
+d) Adjusted R² is unreliable whenever it disagrees with R²
+
+Answer: _____
+
+# AI Exercises
+
+**Tips for Working with Claude:**
+
+- Ask for **R code using only tidyverse** (no other packages)
+- Request **simple, focused answers** to your specific question—not complex analyses
+- Ask Claude to **explain what the code is doing** since you're learning
+- Avoid asking for visualizations or plots in these exercises
+- Include the output of `glimpse()` in your prompt so Claude knows your variable names
+
+**Example prompt:** "Using tidyverse in R, run a multiple regression with lm() predicting conflicts from trade_volume while controlling for distance_km and both_democracy. Explain how adding controls changes the trade_volume coefficient. Keep the code simple and explain what each line does. Here is what my data looks like: [paste glimpse output]"
+
+For each AI exercise:
+- Work with Claude to analyze the data
+- Record your prompts and key findings
+
+## 5. Trade and Conflict Analysis
+
+**Dataset: data/trade_conflict_data.csv**
+
+**Description**: Country-pair data on trade relationships and military conflicts.
+
+**Variables**:
+
+- `country_pair`: Country dyad identifier (chr)
+- `year`: Year of observation (int)
+- `trade_volume`: Bilateral trade in billions (dbl)
+- `conflicts`: Number of militarized disputes (int)
+- `distance_km`: Geographic distance (dbl)
+- `both_democracy`: Both countries democratic (lgl)
+- `alliance`: Military alliance exists (lgl)
+- `gdp_sum`: Combined GDP in trillions (dbl)
+- `colonial_history`: Former colonial relationship (lgl)
+- `common_language`: Share official language (lgl)
+
+### 5.1 Simple vs Controlled Analysis
+
+```{r}
+# Load the dataset
+trade_data <- read_csv("data/trade_conflict_data.csv")
+
+# Examine the structure
+glimpse(trade_data)
+```
+
+Work with Claude to compare the `trade_volume`-`conflicts` relationship with and without controls.
+
+### 5.2 Building Models Progressively
+
+Ask Claude to help you build a model of `conflicts` predicted by `trade_volume`:
+
+- Start with `trade_volume` → `conflicts`
+- Add geographic/cultural controls (`distance_km`, `common_language`, `colonial_history`)
+- Add political controls (`both_democracy`, `alliance`)
+- Interpret how the `trade_volume` coefficient changes
+
+```{r}
+
+```
+
+### 5.3 Testing Mechanisms
+
+Work with Claude to explore whether `both_democracy` or `alliance` moderate the `trade_volume`-`conflicts` relationship by including interaction terms.
+
+```{r}
+
+```
+
+## 6. Education and Income
+
+**Dataset: data/education_income_panel.csv**
+
+**Description**: Individual-level data on education, income, and background.
+
+**Variables**:
+
+- `person_id`: Individual identifier (int)
+- `income`: Annual income in thousands (dbl)
+- `years_education`: Years of schooling (int)
+- `age`: Age in years (int)
+- `experience`: Years of work experience (int)
+- `parent_education`: Parents' average education (dbl)
+- `ability_score`: Standardized test score (dbl)
+- `urban`: Lives in urban area (lgl)
+- `gender`: Gender (chr)
+- `race`: Race/ethnicity (chr)
+
+### 6.1 Returns to Education
+
+```{r}
+# Load the dataset
+education_data <- read_csv("data/education_income_panel.csv")
+
+# Check the structure
+glimpse(education_data)
+```
+
+Use Claude to estimate the returns to `years_education` on `income` with increasing controls (`age`, `experience`, `urban`, `gender`, `race`).
+
+### 6.2 Omitted Variable Bias
+
+Use Claude to estimate returns to `years_education` on `income` with increasing controls.
+
+Work with Claude to:
+- Show how excluding `ability_score` biases the `years_education` coefficient
+- Add family background controls (`parent_education`)
+
+```{r}
+
+```
+
+### 6.3 Heterogeneous Effects
+
+Ask Claude to test whether returns to `years_education` vary by:
+- `gender`
+- `race`
+- `urban` vs rural location
+
+```{r}
+
+```
+
+## 7. Media Effects with Controls
+
+**Dataset: data/media_experiment_full.csv**
+
+**Description**: Experimental data with extensive pre-treatment covariates.
+
+**Variables**:
+
+- `participant_id`: Individual identifier (int)
+- `treatment`: Received partisan news treatment (lgl)
+- `attitude_change`: Change in political attitudes (dbl)
+- `pretreatment_attitude`: Baseline attitude (dbl)
+- `political_knowledge`: Political knowledge score (int)
+- `party_strength`: Strength of party ID, 1-7 (int)
+- `age`: Age in years (int)
+- `education`: Education level (chr)
+- `news_consumption`: Regular news habits (chr)
+- `political_interest`: Interest in politics, 1-10 (int)
+
+### 7.1 Experimental Analysis with Covariates
+
+```{r}
+# Load the dataset
+media_data <- read_csv("data/media_experiment_full.csv")
+
+# Explore the data
+glimpse(media_data)
+```
+
+Work with Claude to analyze the effect of `treatment` on `attitude_change` with and without covariate adjustment.
+
+```{r}
+
+```
+
+### 7.2 Improving Precision
+
+Ask Claude to:
+- Show how adding covariates (`pretreatment_attitude`, `political_knowledge`, `age`, `political_interest`) as controls improves precision of the treatment effect estimate on `attitude_change`
+
+```{r}
+
+```
+
+### 7.3 Specification Choices
+
+Work with Claude to explore how different model specifications (different combinations of `pretreatment_attitude`, `political_knowledge`, `party_strength`, `age`, `education`, `news_consumption`, `political_interest`) affect the estimated treatment effect on `attitude_change`.
+
+```{r}
+
+```
+
+## 8. Campaign Finance Multivariate
+
+**Dataset: data/campaign_complete.csv**
+
+**Description**: Comprehensive campaign finance and election data.
+
+**Variables**:
+
+- `candidate_id`: Candidate identifier (int)
+- `vote_share`: Percentage of votes won (dbl)
+- `total_spending`: Campaign spending in millions (dbl)
+- `incumbent`: Incumbent status (lgl)
+- `challenger_quality`: Challenger held prior office (lgl)
+- `partisan_lean`: District partisan lean (dbl)
+- `president_approval`: Presidential approval in district (dbl)
+- `unemployment`: District unemployment rate (dbl)
+- `media_markets`: Number of media markets (int)
+- `primary_contested`: Had contested primary (lgl)
+
+### 8.1 Money in Politics
+
+```{r}
+# Load the dataset
+campaign_data <- read_csv("data/campaign_complete.csv")
+
+# Look at the structure
+glimpse(campaign_data)
+```
+
+### 8.2 Relative Importance
+
+Use Claude to build a comprehensive model of `vote_share` using `total_spending`, `incumbent`, `challenger_quality`, `partisan_lean`, `president_approval`, `unemployment`, and `primary_contested`.
+
+Work with Claude to:
+- Standardize variables (`total_spending`, `partisan_lean`, `president_approval`, `unemployment`) for comparison
+- Assess relative importance of `incumbent`, `total_spending`, and `partisan_lean`
+- Test for interactions between `incumbent` and `total_spending`, and between `partisan_lean` and `president_approval`
+
+```{r}
+
+```
+
+# Segment B — Categorical Predictors and Interactions
+
+# Non-AI Exercises
+
+## 1. Categorical Variables in Regression
+
+### 1.1 Multiple Choice: Dummy Variables
+
+When including a categorical variable with 4 categories in regression, how many dummy variables do we create?
+
+a) 1
+b) 2
+c) 3
+d) 4
+
+Answer: _____
+
+### 1.2 Fill in the Blanks: Reference Categories
+
+For categorical variables in regression:
+
+1. The excluded category is called the _____ category
+2. Coefficients represent differences from the _____
+3. With k categories, we include _____ dummy variables
+4. The choice of reference category affects _____, not _____
+5. R automatically creates dummies for _____ variables
+
+Word bank: reference, reference category, k-1, interpretation, model fit, factor
+
+### 1.3 True or False: Categorical Predictors
+
+Mark each statement as True (T) or False (F):
+
+_____ We must convert text categories to numbers before regression  
+_____ The reference category has a coefficient of zero  
+_____ Factor levels should be meaningful, not arbitrary  
+_____ We can include all k dummies if we remove the intercept  
+
+## 2. Interpreting Categorical Coefficients
+
+### 2.1 Code Detective: Factor Regression
+
+Given this output, what does the coefficient 5.2 mean?
+
+```r
+lm(salary ~ factor(department), data = company)
+# Coefficients:
+# (Intercept)                    45.0
+# factor(department)Engineering   5.2
+# factor(department)Marketing    -2.1
+# factor(department)Sales        -0.5
+```
+
+The 5.2 means: _____
+
+### 2.2 Match: Interpretation
+
+Match coefficients with their interpretations:
+
+**Coefficients:**
+
+a) (Intercept) = 50
+b) genderFemale = -5
+c) partyRepublican = 10
+d) educationGrad = 15
+
+**Interpretations:**
+
+1. Republicans score 10 points higher than Democrats
+2. The reference group's average is 50
+3. Graduates score 15 points higher than the reference
+4. Females score 5 points lower than males
+
+Matches: a = _____, b = _____, c = _____, d = _____
+
+### 2.3 Spot the Error: Dummy Trap
+
+Assuming people in this dataset are only male or female, what's wrong with this model specification?
+
+```r
+lm(outcome ~ male + female + age, data = data)
+```
+
+Problem: _____
+
+## 3. Interaction Terms
+
+### 3.1 Multiple Choice: Interactions
+
+An interaction term between X₁ and X₂ tests whether:
+
+a) X₁ and X₂ are correlated
+b) The effect of X₁ depends on X₂
+c) X₁ causes X₂
+d) X₁ and X₂ have similar effects
+
+Answer: _____
+
+### 3.2 Fill in the Code: Creating Interactions
+
+Complete this code to add an interaction:
+
+```r
+# Main effects only
+model1 <- lm(y ~ x1 + x2, data = data)
+
+# With interaction (x2)
+model2 <- lm(y ~ x1 * _____, data = data)  # Shorthand
+
+```
+
+### 3.3 True or False: Interaction Effects
+
+Mark each statement as True (T) or False (F):
+
+_____ X₁*X₂ automatically includes main effects in R  
+_____ Interactions must be between continuous variables  
+_____ The main effect of X₁ is its effect when X₂ = 0  
+_____ Centering variables changes interaction interpretation  
+_____ Significant interactions mean main effects don't matter  
+
+## 4. Interpreting Interactions
+
+### 4.1 Code Detective: Interaction Meaning
+
+Given: Y = 10 + 2X₁ + 3X₂ - 0.5X₁*X₂
+
+What is the effect of X₁ when X₂ = 4?
+
+Effect = _____
+
+### 4.2 Match: Interaction Types
+
+Match interaction types with examples:
+
+**Types:**
+
+a) Continuous × Continuous
+b) Continuous × Categorical
+c) Categorical × Categorical
+
+**Examples:**
+
+1. Income effect varies by gender
+2. Age and experience interact for salary
+3. Party and region interact for voting
+
+Matches: a = _____, b = _____, c = _____
+
+### 4.3 Multiple Choice: Marginal Effects
+
+In a model with interactions, the marginal effect of X₁:
+
+a) Is constant across all values of X₂
+b) Depends on the value of X₂
+c) Equals the main effect coefficient
+d) Cannot be calculated
+
+Answer: _____
+
+# AI Exercises
+
+**Tips for Working with Claude:**
+
+- Ask for **R code using only tidyverse** (no other packages)
+- Request **simple, focused answers** to your specific question—not complex analyses
+- Ask Claude to **explain what the code is doing** since you're learning
+- Avoid asking for visualizations or plots in these exercises
+- Include the output of `glimpse()` in your prompt so Claude knows your variable names
+
+**Example prompt:** "Using tidyverse in R, run a regression with lm() predicting salary from gender and years_experience, including an interaction term (gender * years_experience). Explain how to interpret the interaction coefficient. Keep the code simple and explain what each line does. Here is what my data looks like: [paste glimpse output]"
+
+For each AI exercise:
+- Work with Claude to analyze the data
+- Record your prompts and key findings
+
+## 5. Party and Demographics
+
+**Dataset: data/party_demographics.csv**
+
+**Description**: Voter registration data with party affiliation and demographics.
+
+**Variables**:
+
+- `voter_id`: Unique identifier (int)
+- `party`: Democrat, Republican, Independent, Other (chr)
+- `age_group`: 18-29, 30-44, 45-64, 65+ (chr)
+- `education`: HS, Some College, College, Graduate (chr)
+- `income_bracket`: <30k, 30-60k, 60-100k, >100k (chr)
+- `race`: White, Black, Hispanic, Asian, Other (chr)
+- `political_engagement`: Engagement score 0-100 (dbl)
+- `trust_institutions`: Institutional trust 0-100 (dbl)
+- `voted_2020`: Voted in 2020 election (lgl)
+- `ideology_score`: Liberal-conservative 1-7 (dbl)
+
+### 5.1 Categorical Predictors
+
+```{r}
+# Load the dataset
+party_data <- read_csv("data/party_demographics.csv")
+
+# Examine the structure
+glimpse(party_data)
+```
+
+### 5.2 Reference Category Effects
+
+Work with Claude to model political engagement using categorical predictors.
+
+Ask Claude to help you:
+- Change reference category for age_group
+
+```{r}
+
+```
+
+## 6. Gender and Career Outcomes
+
+**Dataset: data/career_gender_interact.csv**
+
+**Description**: Professional career data examining gender effects.
+
+**Variables**:
+
+- `employee_id`: Unique identifier (int)
+- `salary`: Annual salary in thousands (dbl)
+- `gender`: Male, Female, Non-binary (chr)
+- `years_experience`: Years of experience (int)
+- `department`: Engineering, Sales, Marketing, HR, Finance (chr)
+- `performance_rating`: Annual rating 1-5 (dbl)
+- `hours_worked`: Average weekly hours (dbl)
+- `has_mentor`: Has workplace mentor (lgl)
+- `leadership_role`: In leadership position (lgl)
+- `education_level`: Highest degree (chr)
+
+### 6.1 Gender Main Effects
+
+```{r}
+# Load the dataset
+career_data <- read_csv("data/career_gender_interact.csv")
+
+# Check the structure
+glimpse(career_data)
+```
+
+### 6.2 Testing for Interactions
+
+Use Claude to analyze gender salary gaps with proper controls.
+
+Work with Claude to:
+- Test if experience returns differ by gender
+- Examine department × gender interactions
+
+```{r}
+
+```
+
+## 7. Regional Political Differences
+
+**Dataset: data/regional_politics.csv**
+
+**Description**: State-level political outcomes by region.
+
+**Variables**:
+
+- `state`: State name (chr)
+- `region`: Northeast, South, Midwest, West (chr)
+- `subregion`: More detailed regional classification (chr)
+- `dem_vote_share`: Democratic presidential vote share (dbl)
+- `turnout`: Voter turnout percentage (dbl)
+- `median_income`: State median income (dbl)
+- `urban_percent`: Percent urban population (dbl)
+- `college_percent`: Percent with college degree (dbl)
+- `evangelical_percent`: Percent evangelical (dbl)
+- `union_membership`: Union membership rate (dbl)
+
+### 7.1 Regional Categories
+
+```{r}
+# Load the dataset
+regional_data <- read_csv("data/regional_politics.csv")
+
+# Explore the data
+glimpse(regional_data)
+```
+
+### 7.2  Region × Demographics
+
+Work with Claude to test whether demographic effects vary by region.
+
+```{r}
+
+```
+
+## 8. Policy Implementation Effects
+
+**Dataset: data/policy_heterogeneity.csv**
+
+**Description**: Policy effects across different contexts.
+
+**Variables**:
+
+- `unit_id`: Geographic unit identifier (int)
+- `policy_implemented`: Policy adopted (lgl)
+- `outcome`: Policy outcome measure (dbl)
+- `implementation_quality`: High, Medium, Low (chr)
+- `prior_policies`: Number of related policies (int)
+- `state_capacity`: Administrative capacity index (dbl)
+- `political_support`: Support for policy 0-100 (dbl)
+- `urban_rural`: Urban, Suburban, Rural (chr)
+- `region`: Geographic region (chr)
+- `years_since_implementation`: Time since adoption (int)
+
+### 8.1 Implementation Categories
+
+```{r}
+# Load the dataset
+policy_data <- read_csv("data/policy_heterogeneity.csv")
+
+# Look at the structure
+glimpse(policy_data)
+```
+
+### 8.2 Context-Dependent Effects
+
+Use Claude to analyze how implementation quality affects outcomes.
+
+Work with Claude to:
+- Test urban/rural differences in policy effects
+- Examine quality × support interactions
+
+```{r}
+
+```
