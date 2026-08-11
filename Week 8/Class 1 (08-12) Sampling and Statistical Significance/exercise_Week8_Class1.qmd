@@ -1,0 +1,464 @@
+---
+title: "Week 8 · Class 1: Practice Exercises"
+subtitle: "Sampling and Uncertainty & Statistical Significance"
+date: "2026"
+format:
+  pdf:
+    toc: false
+    number-sections: true
+    colorlinks: true
+---
+
+```{r}
+#| include: false
+library(tidyverse)
+library(knitr)
+library(formatR)
+# When running chunks interactively, set the working directory to this file's
+# folder so the relative data/ paths resolve. (During render, knitr already
+# uses the document's directory, so this is skipped.)
+if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+  .doc_path <- rstudioapi::getSourceEditorContext()$path
+  if (length(.doc_path) == 1 && nzchar(.doc_path)) setwd(dirname(.doc_path))
+}
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = FALSE)
+```
+
+# Segment A — Sampling and Uncertainty
+
+# Non-AI Exercises
+
+## 1. Populations vs. Samples
+
+### 1.1 Multiple Choice: Basic Concepts
+
+What is a population parameter?
+
+a) An estimate from a sample
+b) The true, fixed value in the complete population
+c) A variable in a regression model
+d) A hypothesis we want to test
+
+Answer: _____
+
+### 1.2 Fill in the Blanks: Notation
+
+Complete these definitions using proper notation:
+
+1. _____ represents the population mean
+2. _____ represents the sample mean
+3. _____ represents the population standard deviation
+4. _____ represents the sample standard deviation
+5. _____ represents the sample size
+
+Word bank: μ, x̄, σ, s, n
+
+### 1.3 True or False: Sampling Principles
+
+Mark each statement as True (T) or False (F):
+
+_____ All samples from the same population give identical results
+_____ Larger samples generally give more precise estimates
+_____ The sample mean is an unbiased estimator of the population mean
+_____ We can eliminate sampling variation completely
+_____ Different samples vary randomly but predictably
+_____ Random assignment (experiments) and random sampling (polls) both rely on chance producing predictable patterns
+
+## 2. Sources of Sampling Variation
+
+### 2.1 Match: Sources with Explanations
+
+Match each source of variation with its explanation:
+
+**Sources:**
+
+a) Random selection
+b) Population heterogeneity
+c) Sample size limitations
+
+**Explanations:**
+
+1. Smaller samples are more susceptible to variation
+2. Each sample includes different people by chance
+3. The population itself is diverse
+
+Matches: a = _____, b = _____, c = _____
+
+### 2.2 Conceptual Question: Central Limit Theorem
+
+Explain in your own words what the Central Limit Theorem tells us about sampling distributions:
+
+### 2.3 Multiple Choice: Law of Large Numbers
+
+The Law of Large Numbers states that:
+
+a) Large populations always have large means
+b) With more observations, sample means get closer to the population mean
+c) Larger samples always eliminate all error
+d) Sample size doesn't affect precision
+
+Answer: _____
+
+## 3. Standard Error and Margin of Error
+
+### 3.1 Fill in the Blanks: Standard Error Formula
+
+The standard error formula is:
+
+$$SE = \frac{\_\_\_\_\_}{\sqrt{\_\_\_\_\_}}$$
+
+Complete the formula using: σ (population standard deviation), n (sample size)
+
+### 3.2 True or False: Standard Error Concepts
+
+Mark each statement as True (T) or False (F):
+
+_____ Standard error decreases as sample size increases
+_____ Standard error measures typical variation in sample estimates
+_____ Margin of error is the same thing as standard error
+_____ A standard error of 5% means we're 5% uncertain
+_____ We can calculate standard error from a single sample
+
+### 3.3 Calculation: Standard Error
+
+A poll of n=400 voters finds support for a candidate. The population standard deviation is approximately 50 (for proportions measured as percentages). Calculate the standard error:
+
+$$SE = \frac{50}{\sqrt{400}} = \frac{50}{\_\_\_\_\_} = \_\_\_\_\_$$
+
+### 3.4 Calculation: Margin of Error
+
+Using the standard error from 3.3, calculate the margin of error (use the multiplier 2 for approximately 95% confidence):
+
+$$MOE = 2 \times SE = 2 \times \_\_\_\_\_ = \_\_\_\_\_$$
+
+## 4. Interpreting Uncertainty
+
+### 4.1 Multiple Choice: Comparing Polls
+
+Poll A (n=100) has SE = 5%. Poll B (n=900) has SE = 1.67%. Both estimate 52% support. Which is more reliable?
+
+a) Poll A, because it's easier to conduct
+b) Poll B, because it has a smaller standard error
+c) They're equally reliable
+d) Cannot determine without more information
+
+Answer: _____
+
+### 4.2 Scenario: Close Election
+
+A poll finds Candidate A at 48% and Candidate B at 52%, with a margin of error of ±4%. What can we conclude?
+
+a) Candidate B will definitely win
+b) The race is too close to call
+c) Candidate A will definitely win
+d) The poll is invalid
+
+Answer: _____
+
+### 4.3 Short Answer: Explaining Uncertainty
+
+A news report says "Presidential approval is at 45% ±3%". In 2-3 sentences, explain what this means to someone who doesn't know statistics:
+
+## 5. Sample Size, Precision, and the t-Distribution
+
+### 5.1 Multiple Choice: Doubling Sample Size
+
+To cut the standard error in half, you need to:
+
+a) Double the sample size
+b) Triple the sample size
+c) Quadruple the sample size
+d) Increase sample size by 50%
+
+Answer: _____
+
+### 5.2 True or False: The t-Distribution
+
+Mark each statement as True (T) or False (F):
+
+_____ The t-distribution has heavier tails than the normal distribution
+_____ We use it because the standard deviation is *estimated* from the sample
+_____ A sample of 25 has 24 degrees of freedom (df = n − 1)
+_____ As samples grow, the t-distribution approaches the normal
+_____ Small samples need a *smaller* critical value to reach significance
+
+### 5.3 Multiple Choice: Which Distribution?
+
+A researcher has a sample of n = 15 and does not know the population standard deviation. Which distribution should her test statistic use?
+
+a) The normal distribution; degrees of freedom are not needed
+b) The t-distribution with df = 15
+c) The t-distribution with df = 14
+d) The t-distribution with df = 16
+
+Answer: _____
+
+# AI Exercises
+
+**Tips for Working with Claude:**
+
+- Ask for **R code using only tidyverse** (no other packages)
+- Request **simple, focused answers** to your specific question—not complex analyses
+- Ask Claude to **explain what the code is doing** since you're learning
+- Avoid asking for visualizations or plots unless an exercise asks for one
+- Include the output of `glimpse()` in your prompt so Claude knows your variable names
+
+**Example prompt:** "Using tidyverse in R, calculate the mean, standard deviation, and standard error (SD divided by square root of n) for the engagements variable. Keep the code simple and explain what each line does. Here is what my data looks like: [paste glimpse output]"
+
+For each AI exercise:
+- Work with Claude to perform calculations
+- Focus on understanding what the numbers mean
+- Practice interpreting results in plain language
+
+## 6. Computing Sample Statistics
+
+**Goal**: Calculate means and standard deviations from sample data
+
+**Dataset: data/political_text_ml.csv**
+
+**Description**: Social media posts about politics with various metrics.
+
+**Variables**:
+
+- `post_id`: Unique post identifier (int)
+- `user_id`: User identifier (int)
+- `date`: Post date (date)
+- `follower_count`: Number of followers (int)
+- `topic`: Political topic discussed (chr): "Economy", "Health", "Elections"
+- `contains_misinfo`: Whether post contains misinformation (int): 0=No, 1=Yes
+- `engagements`: Number of likes/shares/comments (int)
+- `sentiment`: Sentiment score from -1 (negative) to 1 (positive) (dbl)
+- `verified`: Whether user is verified (int): 0=No, 1=Yes
+
+### 6.1 Basic Calculations
+
+```{r}
+# Load libraries
+
+# Load political social media data
+social_media <- read_csv("data/political_text_ml.csv")
+
+# View the structure
+glimpse(social_media)
+```
+
+Work with Claude to:
+- Calculate the sample mean for `engagements`
+- Calculate the sample mean for `sentiment`
+- Calculate the sample standard deviation (s) for both variables
+- Visualize the `sentiment` distribution with a histogram
+- Describe the distribution in words
+
+```{r}
+
+```
+
+### 6.2 Comparing Two Groups
+
+Ask Claude to help you:
+- Compare mean `sentiment` scores between verified (verified=1) and unverified users (verified=0)
+- Calculate means and SDs for each group
+- Compare mean `engagements` between posts with misinformation (contains_misinfo=1) and without (contains_misinfo=0)
+- Describe the differences you observe
+
+```{r}
+
+```
+
+## 7. Standard Error Calculations
+
+**Goal**: Calculate standard errors and understand what they measure
+
+**Dataset: data/policy_outcomes_ml.csv**
+
+**Description**: International development projects with funding and evaluation data.
+
+**Variables**:
+
+- `proj_id`: Project identifier (int)
+- `recipient_country`: Recipient country code (chr)
+- `start_year`: Project start year (int)
+- `sector`: Project sector (chr): "Education", "Health", "Infrastructure", "Governance", "Other"
+- `commitment_usd_m`: Funding committed in millions USD (dbl)
+- `implementation_years`: Years to implement (int)
+- `completed`: Whether project completed (int): 0=No, 1=Yes
+- `eval_score`: Evaluation score 1-5 (int): 1=Poor, 5=Excellent (NA if not completed)
+
+### 7.1 Computing Standard Error
+
+```{r}
+# Load policy outcomes data
+policy_data <- read_csv("data/policy_outcomes_ml.csv")
+
+# View the structure
+glimpse(policy_data)
+```
+
+Work with Claude to:
+- Filter to only completed projects (completed = 1)
+- Calculate the sample mean of `eval_score`
+- Calculate the sample standard deviation (s) of `eval_score`
+- Calculate the standard error: SE = s / sqrt(n)
+- Explain what this number means
+
+```{r}
+
+```
+
+### 7.2 Standard Error by Group
+
+Ask Claude to help you:
+- Calculate mean `commitment_usd_m` for each sector
+- Calculate standard error for each sector
+- Compare which sector has the most/least uncertainty in funding levels
+- Explain why SE differs between sectors (hint: look at sample sizes)
+
+```{r}
+
+```
+
+## 8. Margin of Error in Practice
+
+**Goal**: Calculate and interpret margins of error for realistic scenarios
+
+**Dataset: data/election_prediction_ml.csv**
+
+**Description**: County-level 2016 presidential election results.
+
+**Variables**:
+
+- `state`: State name (chr)
+- `county`: County name (chr)
+- `FIPS`: County FIPS code (int)
+- `votes_dem_16`: Democratic votes in 2016 (int)
+- `votes_gop_16`: Republican votes in 2016 (int)
+- `votes_total_16`: Total votes cast in 2016 (int)
+
+### 8.1 Vote Share Analysis
+
+```{r}
+# Load election data
+election_data <- read_csv("data/election_prediction_ml.csv")
+
+# View the structure
+glimpse(election_data)
+```
+
+Work with Claude to:
+- Calculate Democratic vote share for each county: `votes_dem_16 / votes_total_16`
+- Calculate the mean Democratic vote share across all counties
+- Calculate the standard deviation of Democratic vote shares
+- Calculate the standard error: SE = s / sqrt(n)
+- Calculate the margin of error (use multiplier 2)
+- Report as "X% ± Y%"
+
+```{r}
+
+```
+
+### 8.2 State-Level Comparison
+
+Ask Claude to help you:
+- Calculate mean Democratic vote share by state
+- Calculate standard error for each state
+- Compare which states have more/less variation in county results
+- Identify states where results are most consistent vs most variable
+
+```{r}
+
+```
+
+### 8.3 Interpreting Uncertainty
+
+Using your state-level results from 8.2, write a short paragraph (3-5 sentences) explaining:
+
+- Why a small difference in mean vote share between two states might not be meaningful — reference the margins of error
+- Why states with many counties allow more confident comparisons than states with few counties
+
+# Segment B — What is Statistical Significance?
+
+# Specifying Hypotheses
+
+For each scenario below, clearly state:
+
+1. The **null hypothesis ($H_0$)** - the "nothing is happening" assumption
+2. The **alternative hypothesis ($H_1$)** - what you think might be true
+
+Remember: The null hypothesis typically states "no effect" or "no difference," while the alternative hypothesis states that an effect or difference exists.
+
+## Scenario 1: Voter Turnout
+
+A political consultant claims that sending personalized text messages to voters increases turnout. To test this, you randomly assign 500 voters to receive text messages and 500 voters to a control group with no messages. You will measure turnout rates for both groups.
+
+**Null Hypothesis ($H_0$):**
+
+**Alternative Hypothesis ($H_1$):**
+
+## Scenario 2: Presidential Approval
+
+A news outlet wants to know whether the president's approval rating has changed from last month's level of 48%. They conduct a new poll of 1,000 registered voters.
+
+**Null Hypothesis ($H_0$):**
+
+**Alternative Hypothesis ($H_1$):**
+
+## Scenario 3: Education and Political Knowledge
+
+A researcher hypothesizes that college graduates have higher levels of political knowledge than those without college degrees. They survey 400 people (200 college graduates and 200 non-graduates) and measure their political knowledge on a 0-100 scale.
+
+**Null Hypothesis ($H_0$):**
+
+**Alternative Hypothesis ($H_1$):**
+
+## Scenario 4: Campaign Spending Effect
+
+An incumbent politician believes that increased campaign spending will improve their vote share in the upcoming election. They want to test whether counties where they spend more money show higher support compared to last election's results.
+
+**Null Hypothesis ($H_0$):**
+
+**Alternative Hypothesis ($H_1$):**
+
+## Scenario 5: Partisan News Consumption
+
+A media researcher wants to test whether Republicans and Democrats differ in their average daily consumption of political news (measured in minutes per day). They survey 300 Republicans and 300 Democrats.
+
+**Null Hypothesis ($H_0$):**
+
+**Alternative Hypothesis ($H_1$):**
+
+## Scenario 6: Policy Support After Information
+
+A policy advocacy group believes that providing voters with factual information about climate change will increase support for environmental policies. They randomly assign 600 participants to either receive an informational packet or not, then measure their policy support on a 0-10 scale.
+
+**Null Hypothesis ($H_0$):**
+
+**Alternative Hypothesis ($H_1$):**
+
+# Conceptual Questions
+
+## Question 1: Understanding the Logic
+
+Explain in your own words why we test the null hypothesis rather than directly testing the alternative hypothesis.
+
+## Question 2: Rejecting vs. Failing to Reject
+
+What is the difference between "rejecting the null hypothesis" and "accepting the alternative hypothesis"? Are these the same thing? (You will need to look this up)
+
+## Question 3: Directionality
+
+Consider these two alternative hypotheses:
+
+- **A:** "The candidate's approval is different from 50%"
+- **B:** "The candidate's approval is greater than 50%"
+
+What is the key difference between these hypotheses? When might you choose one over the other?
+
+## Question 4: Interpreting a p-value
+
+A poll of 1,000 voters finds 46% presidential approval. Testing $H_0$: approval = 50%, you compute p = 0.006. Write one sentence stating exactly what this p-value means, and name one common misreading you avoided.
+
+## Question 5: Statistical vs. Practical Significance
+
+A study of 40,000 users finds that an intervention raises civic engagement scores from 50.0 to 50.4 on a 100-point scale (p < 0.001). Is this finding important? Explain the difference between the question the p-value answers and the question a policymaker cares about.
+
+\newpage
