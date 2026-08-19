@@ -1,0 +1,1119 @@
+---
+title: "Week 9 · Class 1: Practice Exercises"
+subtitle: "Statistical Tests & Confidence Intervals"
+date: "2026"
+format:
+  pdf:
+    toc: false
+    number-sections: true
+    colorlinks: true
+---
+
+```{r}
+#| include: false
+library(tidyverse)
+library(knitr)
+library(formatR)
+library(broom)
+# When running chunks interactively, set the working directory to this file's
+# folder so the relative data/ paths resolve. (During render, knitr already
+# uses the document's directory, so this is skipped.)
+if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+  .doc_path <- rstudioapi::getSourceEditorContext()$path
+  if (length(.doc_path) == 1 && nzchar(.doc_path)) setwd(dirname(.doc_path))
+}
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = FALSE)
+```
+
+# Segment A — Statistical Tests
+
+# Non-AI Exercises
+
+## 1. Understanding Standard Error
+
+### 1.1 Conceptual Questions
+
+**1. What is standard error?**
+
+a) The standard deviation of your sample data
+b) The standard deviation of the sampling distribution
+c) The average error in your measurements
+d) The difference between sample mean and population mean
+
+Answer: _____
+
+**2. What happens to standard error when you double your sample size?**
+
+a) It doubles
+b) It stays the same
+c) It decreases by √2 (approximately 1.41)
+d) It is cut in half
+
+Answer: _____
+
+**3. Which factor does NOT affect the standard error?**
+
+a) Sample size
+b) Population mean
+c) Sample standard deviation
+d) None of the above (all affect SE)
+
+Answer: _____
+
+### 1.2 Calculating Standard Error
+
+Given a sample with n = 36 and s = 12:
+
+Calculate SE = s / √n
+
+SE = _____ / _____ = _____
+
+### 1.3 True or False: Standard Error Concepts
+
+Mark each statement as True (T) or False (F):
+
+_____ Larger samples always have smaller standard errors  
+_____ Standard error measures the precision of your estimate  
+_____ To halve the SE, you need 4× the sample size  
+_____ SE depends on both sample size and variability  
+_____ Standard error is the same as standard deviation  
+
+## 2. The t-Distribution
+
+### 2.1 Multiple Choice: t-Distribution Basics
+
+**1. The t-distribution was developed to solve what problem?**
+
+a) Computing means of large samples
+b) Dealing with uncertainty when estimating standard deviation from small samples
+c) Testing multiple hypotheses at once
+d) Creating confidence intervals
+
+Answer: _____
+
+**2. As sample size increases, the t-distribution:**
+
+a) Gets wider tails
+b) Approaches the normal distribution
+c) Becomes bimodal
+d) Stays exactly the same
+
+Answer: _____
+
+**3. For a sample of n = 10, the degrees of freedom are:**
+
+a) 10
+b) 9
+c) 11
+d) 5
+
+Answer: _____
+
+### 2.2 Conceptual Understanding
+
+**Why does the t-distribution have heavier tails than the normal distribution?**
+
+Explain in 1-2 sentences:
+
+_____________________________________________________________________
+
+_____________________________________________________________________
+
+## 3. One-Sample t-Tests
+
+### 3.1 Hypothesis Testing Setup
+
+A pollster wants to know whether presidential approval differs from 50%.
+
+**Null Hypothesis (H₀)**: _______________________________________________
+
+**Alternative Hypothesis (H₁)**: _________________________________________
+
+**Test statistic formula**: t = _________________________________________
+
+### 3.2 Practice Calculation
+
+A poll of n = 25 voters finds a mean approval of 47.5% with s = 10. The critical value at α = 0.05 with df = 24 is 2.064.
+
+**Step 1: Calculate SE**
+
+SE = s / √n = _____ / _____ = _____
+
+**Step 2: Calculate the t-statistic**
+
+t = (x̄ − μ₀) / SE = (_____ − _____) / _____ = _____
+
+**Step 3: Conclusion**
+
+Is |t| > 2.064? _____
+
+Conclusion: _________________________________________________________
+
+### 3.3 Interpreting p-values
+
+**If p = 0.08, what does this mean?**
+
+a) There's an 8% chance the null hypothesis is true
+b) If the null is true, there's an 8% chance of seeing this result or more extreme
+c) The effect size is 8%
+d) We should reject the null hypothesis
+
+Answer: _____
+
+## 4. Two-Sample t-Tests
+
+### 4.1 Match: Research Questions to Comparisons
+
+Match each research question to what it's comparing:
+
+**Research Questions:**
+
+a) Do Democrats and Republicans differ in political knowledge?  
+b) Does a new curriculum improve test scores?  
+c) Are battleground states more competitive?  
+d) Do younger voters prefer different candidates?  
+
+**Comparisons:**
+
+1. Treatment vs. Control groups  
+2. Two different age groups  
+3. Two political parties  
+4. Battleground vs. Safe states  
+
+Matches: a = _____, b = _____, c = _____, d = _____
+
+### 4.2 Understanding the SE of Differences
+
+The SE of the difference between two means is:
+
+$$SE_{diff} = \sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}$$
+
+**True or False:**
+
+_____ The SE of difference equals the average of the two group SEs
+_____ Larger samples lead to smaller SE of difference
+_____ We add variances, not standard errors
+_____ Equal sample sizes minimize the SE of difference
+
+### 4.3 Practice Two-Sample Test
+
+Two groups of students take a civic knowledge test:
+
+- **Group 1** (took a government course): n₁ = 40, x̄₁ = 72, s₁ = 12
+- **Group 2** (did not): n₂ = 40, x̄₂ = 65, s₂ = 15
+
+Use a critical value of 2.00 (α = 0.05).
+
+**Step 1: Calculate the difference in means**
+
+Difference = _____ − _____ = _____
+
+**Step 2: Calculate the SE of the difference**
+
+SE~diff~ = √(s₁²/n₁ + s₂²/n₂) = √(_____/_____ + _____/_____) = _____
+
+**Step 3: Calculate the t-statistic**
+
+t = Difference / SE~diff~ = _____ / _____ = _____
+
+**Step 4: Interpret**
+
+Significant? _____
+
+Why? _______________________________________________________________
+
+### 4.4 When t-Tests Can Go Wrong
+
+**1. Which situation is most likely to make a two-sample t-test unreliable?**
+
+a) The two groups have slightly different variances
+b) n = 12 per group and the outcome is strongly skewed
+c) n = 200 per group and the outcome is not perfectly normal
+d) The outcome is measured on a 0-100 scale
+
+Answer: _____
+
+**2. R's `t.test()` applies Welch's correction by default. What problem does this address?**
+
+a) Outliers in the outcome variable
+b) Unequal variances between the two groups
+c) Non-random sampling
+d) Small sample sizes
+
+Answer: _____
+
+**3. True or False:**
+
+_____ With n > 30 per group, the t-test usually performs well even when the data are skewed
+_____ Extreme outliers can distort both the means and the variances a t-test relies on
+_____ The classical (non-Welch) t-test assumes the two groups have equal variances
+_____ A t-test requires the outcome to be perfectly normally distributed in every case
+
+## 5. Standard Error in Regression
+
+### 5.1 Multiple Choice: Regression SE
+
+**1. The standard error of a regression coefficient tells us:**
+
+a) How much the coefficient would vary across repeated samples
+b) The average residual
+c) The strength of the relationship
+d) The probability the coefficient is zero
+
+Answer: _____
+
+**2. Which increases the SE of a regression coefficient?**
+
+a) Larger sample size
+b) More variability in the outcome (larger residuals)
+c) More variability in the predictor
+d) Adding more control variables
+
+Answer: _____
+
+**3. A coefficient is 0.08 with SE = 0.02. Is it significant at α = 0.05?**
+
+a) Yes, because |0.08 / 0.02| = 4 > 1.96
+b) No, because 0.08 is small
+c) Cannot determine without p-value
+d) Yes, because SE is small
+
+Answer: _____
+
+### 5.2 Reading Regression Output
+
+Interpret this regression output:
+
+```
+               Estimate  Std.Error  t.value  p.value
+(Intercept)    45.200    3.100      14.58    <0.001
+ad_spending     0.035    0.008       4.38    <0.001
+incumbent       8.500    1.200       7.08    <0.001
+```
+
+**Questions:**
+
+1. For every $1,000 increase in ad_spending, vote share increases by: _____
+
+2. The incumbent coefficient SE is 1.200. What does this mean?
+
+   _________________________________________________________________
+
+3. Which predictor has the most precise estimate (smallest SE relative to estimate)?
+
+   _________________________________________________________________
+
+### 5.3 Coefficient Plot Interpretation
+
+Consider these three coefficients with 95% confidence intervals:
+
+- **Education**: 0.50 ± 0.20 (CI: 0.30 to 0.70)
+- **Age**: 0.15 ± 0.18 (CI: -0.03 to 0.33)
+- **Income**: -0.05 ± 0.25 (CI: -0.30 to 0.20)
+
+**Questions:**
+
+1. Which coefficients are statistically significant? _____
+
+2. How can you tell from the confidence intervals? _____
+
+3. Which estimate is most precise? _____ Why? _____
+
+## 6. t-Tests in Regression Context
+
+### 6.1 True or False: Understanding Regression t-Tests
+
+_____ Every regression coefficient is automatically tested against zero
+_____ The t-statistic is calculated as: coefficient / SE
+_____ In multiple regression, t-tests are conditional on other variables
+_____ A two-sample t-test is equivalent to regression with a binary predictor
+_____ Larger t-statistics indicate weaker evidence
+
+### 6.2 Conditional Tests
+
+**Simple regression**: vote_share ~ campaign_spending
+- Coefficient: 0.045, SE: 0.010, t: 4.50
+
+**Multiple regression**: vote_share ~ campaign_spending + incumbent
+- Coefficient: 0.035, SE: 0.008, t: 4.38
+
+**Questions:**
+
+1. Why did the coefficient change from 0.045 to 0.035?
+
+   _________________________________________________________________
+
+2. What does the t-test mean in the simple regression?
+
+   _________________________________________________________________
+
+3. What does the t-test mean in the multiple regression?
+
+   _________________________________________________________________
+
+### 6.3 Match: Interpretation of t-Statistics
+
+Match each t-value with its interpretation (α = 0.05, large sample):
+
+**t-values:**
+a) t = 1.2
+b) t = 2.5
+c) t = 0.4
+d) t = -3.8
+
+**Interpretations:**
+1. Strong evidence against null (significant)
+2. Moderate evidence against null (significant)
+3. Weak evidence, fail to reject null
+4. Very weak evidence, fail to reject null
+
+Matches: a = _____, b = _____, c = _____, d = _____
+
+## 7. Degrees of Freedom
+
+### 7.1 Calculating Degrees of Freedom
+
+1. One-sample t-test with n = 50: df = _____
+
+2. Two-sample t-test with n₁ = 30, n₂ = 40: df ≈ _____
+
+3. Regression with n = 100 and 3 predictors: df = _____
+
+### 7.2 Multiple Choice: DF Concepts
+
+**Why do we subtract 1 for degrees of freedom in a one-sample test?**
+
+a) To make the test more conservative, by convention
+b) Because we use up one degree of freedom estimating the mean
+c) Because the first observation carries no information
+d) Because sample sizes are always off by one
+
+Answer: _____
+
+# AI Exercises
+
+## Worked Example: What an AI-Assisted Solution Should Look Like
+
+Before you start, here is a complete worked solution in the format we expect from the exercises below. Use this as a template for the depth and style of your write-up.
+
+**Question:** Does the GOTV canvassing treatment increase turnout?
+
+**Prompt to Claude:** "Using tidyverse in R, load `data/gotv_experiment.csv`, compute mean turnout by treatment group, and run a two-sample t-test of turnout by treatment. Briefly explain the output."
+
+**R code returned:**
+
+```{r}
+#| eval: false
+gotv <- read_csv("data/gotv_experiment.csv")
+
+gotv %>%
+  group_by(treatment) %>%
+  summarise(mean_turnout = mean(turnout), n = n())
+
+t.test(turnout ~ treatment, data = gotv)
+```
+
+**Sample interpretation (what you write):**
+
+> The canvassed group turned out at 48.8% vs. 44.4% for the control group --- a 4.4 percentage point difference (t = 0.99, df = 498, p = 0.325). Because p > 0.05, we fail to reject the null of no difference: a gap this size could easily arise by chance in a study of 500 voters. The 95% CI for the difference runs from -4.4 to +13.2 points, so it includes zero. Note what this does *not* say. The interval also includes effects as large as 13 points, which would be substantively enormous for a GOTV campaign. This study simply lacks the precision to distinguish "no effect" from "a large effect," so the honest conclusion is that we cannot tell --- not that canvassing does nothing.
+
+Use this structure --- (1) prompt, (2) code, (3) numerical result, (4) one-paragraph interpretation that names the test, the p-value, and the substantive conclusion --- for the exercises that follow.
+
+**Tips for Working with Claude:**
+
+- Ask for **R code using only tidyverse** (no other packages)
+- Request **simple, focused answers** to your specific question—not complex analyses
+- Ask Claude to **explain what the code is doing** since you're learning
+- Avoid asking for visualizations or plots in these exercises
+- Include the output of `glimpse()` in your prompt so Claude knows your variable names
+
+**Example prompt:** "Using tidyverse in R, run a t.test() comparing turnout between the Control and Canvassed groups. Explain what the t-statistic, p-value, and standard error mean. Keep the code simple and explain what each line does. Here is what my data looks like: [paste glimpse output]"
+
+For each exercise, work with Claude to conduct analyses and interpret results.
+
+**Datasets Used in This Section:**
+
+1. **data/gotv_experiment.csv** (n=500): GOTV experiment with treatment/control groups
+2. **data/political_knowledge.csv** (n=200): News consumption and political knowledge
+3. **data/campaign_spending.csv** (n=200): Campaign spending, incumbency, and vote share
+
+## 8. Get-Out-The-Vote Analysis
+
+**Dataset: data/gotv_experiment.csv**
+
+GOTV experiment data to practice two-sample t-tests.
+
+```{r}
+# Load the dataset
+gotv_data <- read_csv("data/gotv_experiment.csv")
+
+# Examine the data
+glimpse(gotv_data)
+```
+
+**Variables**:
+
+- `voter_id`: Unique voter identifier (int, 1-500)
+- `treatment`: Experimental condition (chr: "Control" or "Canvassed")
+- `turnout`: Whether voter turned out (int: 0 or 1)
+- `turnout_pct`: Turnout as percentage (dbl: 0 or 100)
+
+**Work with Claude to:**
+
+1. Calculate summary statistics by group
+2. Conduct a two-sample t-test
+
+```{r}
+
+```
+
+## 9. Political Knowledge Study
+
+**Dataset: data/political_knowledge.csv**
+
+Relationship between news consumption and political knowledge.
+
+```{r}
+# Load the dataset
+knowledge_data <- read_csv("data/political_knowledge.csv")
+
+# Examine the data
+glimpse(knowledge_data)
+```
+
+**Variables**:
+
+- `person_id`: Unique person identifier (int, 1-200)
+- `watches_news`: Watches news regularly (chr: "Yes" or "No")
+- `knowledge_score`: Political knowledge score (dbl: 0-10 scale)
+
+**Ask Claude to help:**
+
+1. Test if news watchers have higher knowledge
+2. Calculate and interpret the standard error
+3. Discuss whether this is causal evidence
+
+```{r}
+
+```
+
+## 10. Campaign Spending Regression
+
+**Dataset: data/campaign_spending.csv**
+
+Relationship between campaign spending and electoral outcomes. This is the same dataset used in lecture.
+
+```{r}
+# Load the dataset
+campaign_data <- read_csv("data/campaign_spending.csv")
+
+# Examine the data
+glimpse(campaign_data)
+```
+
+**Variables**:
+
+- `candidate_id`: Unique candidate identifier (int, 1-200)
+- `campaign_spending`: Campaign spending in thousands of dollars (dbl)
+- `incumbent`: Incumbent status (int: 0 = challenger, 1 = incumbent)
+- `vote_share`: Vote share percentage (dbl: 0-100)
+
+**Work with Claude to:**
+
+1. Run a simple regression of vote_share on campaign_spending
+2. Run a multiple regression adding incumbent status
+3. Interpret all t-statistics
+4. Explain how the spending coefficient changed
+
+```{r}
+
+```
+
+# Segment B — Confidence Intervals
+
+# Non-AI Exercises
+
+## 1. Understanding Confidence Intervals
+
+### 1.1 Conceptual Understanding
+
+**1. What does a 95% confidence interval tell us?**
+
+a) There's a 95% chance the true parameter is in this interval
+b) 95% of the data falls within this interval
+c) If we repeated the study 100 times, about 95 CIs would contain the true parameter
+d) The parameter varies 95% of the time
+
+Answer: _____
+
+**2. A 95% CI for a coefficient is [2.1, 5.8]. What can we conclude?**
+
+a) The effect is not statistically significant at α = 0.05
+b) The effect is statistically significant at α = 0.05
+c) We need more information to determine significance
+d) The true value is exactly 3.95 (the midpoint)
+
+Answer: _____
+
+**3. Which statement about confidence intervals is TRUE?**
+
+a) Wider intervals indicate more precision
+b) Higher confidence levels require narrower intervals
+c) Larger samples generally produce narrower CIs
+d) CIs and p-values provide completely different information
+
+Answer: _____
+
+### 1.2 True or False: CI Concepts
+
+Mark each statement as True (T) or False (F):
+
+_____ A 99% CI is wider than a 95% CI for the same data
+_____ If a 95% CI excludes zero, then p < 0.05
+_____ The confidence interval is random, but the parameter is fixed
+_____ Narrower CIs always mean larger effect sizes
+_____ Sample size affects the width of confidence intervals
+
+## 2. Calculating Confidence Intervals
+
+### 2.1 Manual CI Calculation
+
+Given the following information from a regression:
+
+- Coefficient (β̂) = 0.45
+- Standard Error (SE) = 0.12
+- Sample size (n) = 60, so df = 58
+- Critical value for 95% CI with df = 58: t~critical~ ≈ 2.00
+
+**Step 1: Calculate the margin of error**
+
+Margin = t~critical~ × SE = _____ × _____ = _____
+
+**Step 2: Calculate CI bounds**
+
+Lower bound = β̂ - Margin = _____ - _____ = _____
+
+Upper bound = β̂ + Margin = _____ + _____ = _____
+
+**95% CI**: [_____, _____]
+
+### 2.2 Interpreting Different Confidence Levels
+
+For the same coefficient (β̂ = 0.45, SE = 0.12, df = 58):
+
+Calculate confidence intervals at different levels:
+
+**90% CI** (t~critical~ ≈ 1.67):
+
+Lower = _____, Upper = _____, Width = _____
+
+**95% CI** (t~critical~ ≈ 2.00):
+
+Lower = _____, Upper = _____, Width = _____
+
+**99% CI** (t~critical~ ≈ 2.66):
+
+Lower = _____, Upper = _____, Width = _____
+
+**Question**: What happens to the width as confidence increases? _____
+
+### 2.3 CI and Significance
+
+For each confidence interval, determine if the coefficient is significant at α = 0.05:
+
+**1. 95% CI: [0.2, 0.8]**
+
+Significant? _____ Why? _____________________________
+
+**2. 95% CI: [-0.1, 0.5]**
+
+Significant? _____ Why? _____________________________
+
+**3. 95% CI: [-2.5, -0.8]**
+
+Significant? _____ Why? _____________________________
+
+## 3. Three Roads to the Same Conclusion
+
+### 3.1 Connecting SE, t-statistic, p-value, and CI
+
+Given regression output:
+
+```
+Coefficient: 0.035
+Std. Error: 0.008
+t-value: ?
+p-value: ?
+```
+
+**Step 1: Calculate t-statistic**
+
+t = Coefficient / SE = _____ / _____ = _____
+
+**Step 2: With df = 100, is |t| > 1.98?**
+
+_____ (Yes/No), so the coefficient is _____ (significant/not significant)
+
+**Step 3: Calculate 95% CI (t~critical~ ≈ 1.98)**
+
+CI = 0.035 ± (1.98 × 0.008) = [_____, _____]
+
+**Step 4: Does the CI exclude zero?**
+
+_____ (Yes/No), confirming the coefficient is _____ (significant/not significant)
+
+### 3.2 Comparing Two Studies
+
+**Study A** (small sample, n = 40):
+
+- β̂ = 0.75, SE = 0.30, t = 2.50, p = 0.017
+- 95% CI: [0.14, 1.36]
+
+**Study B** (large sample, n = 500):
+
+- β̂ = 0.78, SE = 0.09, t = 8.67, p < 0.001
+- 95% CI: [0.60, 0.96]
+
+**Questions:**
+
+1. Which study has a more precise estimate? _____
+
+2. Why? (Explain in terms of SE or CI width)
+
+   _________________________________________________________________
+
+3. Both studies found similar effect sizes. Why does Study B have a smaller p-value?
+
+   _________________________________________________________________
+
+### 3.3 Match: Statistical Concepts
+
+Match each concept to its interpretation:
+
+**Concepts:**
+a) Standard Error = 0.15
+b) t-statistic = 3.2
+c) p-value = 0.002
+d) 95% CI = [0.25, 0.65]
+
+**Interpretations:**
+1. Coefficient is 3.2 standard errors from zero
+2. Range of plausible values for the parameter
+3. Measure of sampling variability/precision
+4. Probability of seeing this result if null is true
+
+Matches: a = _____, b = _____, c = _____, d = _____
+
+## 4. Sample Size and Precision
+
+### 4.1 True or False: Sample Size Effects
+
+Mark each statement as True (T) or False (F):
+
+_____ Doubling sample size doubles precision (halves SE)
+_____ Larger samples produce narrower confidence intervals
+_____ With n = 10,000, even tiny effects can be statistically significant
+_____ Sample size affects the point estimate (coefficient)
+_____ Critical values get smaller as sample size increases
+
+### 4.2 Practical Implications
+
+A pilot study (n = 30) finds:
+- β̂ = 5.2, SE = 2.5, p = 0.048
+- 95% CI: [0.1, 10.3]
+
+**Questions:**
+
+1. Is this result statistically significant at α = 0.05? _____
+
+2. Is the confidence interval informative? Why or why not?
+
+   _________________________________________________________________
+
+3. What would you recommend for a follow-up study?
+
+   _________________________________________________________________
+
+## 5. Writing About Confidence Intervals
+
+### 5.1 Identify Good vs. Bad Writing
+
+Rate each write-up as Good (G) or Bad (B):
+
+**Write-up A:**
+"The coefficient for education was 2.5 (95% CI: [1.2, 3.8], p = 0.001)."
+
+Rating: _____ Problem (if bad): _________________________________
+
+**Write-up B:**
+"Education significantly predicts income (β = 2.5, 95% CI: [1.2, 3.8], t(148) = 3.85, p = 0.001). Each additional year of education is associated with $2,500 higher annual income. This effect is both statistically and practically meaningful."
+
+Rating: _____ Strengths: _____________________________________
+
+**Write-up C:**
+"There is a 95% probability that the true effect of education is between 1.2 and 3.8."
+
+Rating: _____ Problem (if bad): _________________________________
+
+**Write-up D:**
+"Education had no effect (p = 0.12)."
+
+Rating: _____ Problem (if bad): _________________________________
+
+### 5.2 Fix the Bad Write-Ups
+
+Rewrite one of the bad examples from 5.1 to make it good:
+
+Original: _________________________________________________________
+
+Improved: _________________________________________________________
+
+_________________________________________________________________
+
+_________________________________________________________________
+
+## 6. Critical Values and qt()
+
+### 6.1 Confidence Level Practice
+
+Match each confidence level to the probability used in qt():
+
+**Confidence Levels:**
+a) 90% CI
+b) 95% CI
+c) 99% CI
+d) 99.9% CI
+
+**qt() probabilities:**
+1. 0.995
+2. 0.975
+3. 0.95
+4. 0.9995
+
+Matches: a = _____, b = _____, c = _____, d = _____
+
+**Why these values?** (Explain two-tailed logic)
+
+_________________________________________________________________
+
+_________________________________________________________________
+
+## 7. Common Pitfalls
+
+### 7.1 Statistical vs. Practical Significance
+
+**Scenario**: A study with n = 50,000 finds:
+
+- β̂ = 0.08, SE = 0.02, p < 0.001
+- 95% CI: [0.04, 0.12]
+- Outcome is measured 0-100 scale
+
+**Questions:**
+
+1. Is this statistically significant? _____
+
+2. Is this practically significant? Why or why not?
+
+   _________________________________________________________________
+
+3. What's the problem with focusing only on the p-value?
+
+   _________________________________________________________________
+
+### 7.2 Non-Significant ≠ No Effect
+
+**Study results**: β̂ = 6.5, SE = 4.2, p = 0.13
+- 95% CI: [-2.0, 15.0]
+
+**Bad interpretation**: "There is no effect (p > 0.05)."
+
+**Questions:**
+
+1. What's wrong with this interpretation?
+
+   _________________________________________________________________
+
+2. What does the CI tell us?
+
+   _________________________________________________________________
+
+3. Write a better interpretation:
+
+   _________________________________________________________________
+
+### 7.3 Multiple Testing
+
+A researcher tests 20 unrelated predictors of turnout. None of them has any true relationship with turnout. She uses α = 0.05 for every test.
+
+**1. About how many of the 20 tests would you expect to come out "significant" purely by chance?**
+
+a) 0
+b) 1
+c) 5
+d) 20
+
+Answer: _____
+
+**2. She reports only the one significant predictor and does not mention the other 19 tests. What is the problem?**
+
+a) Nothing — she reported a result that met the standard threshold
+b) The reported p-value is misleading, because it ignores the 19 other chances she gave herself to find something
+c) She should have collected a larger sample
+d) She should have used a 99% confidence interval instead
+
+Answer: _____
+
+**3. Name one thing she could do to report this honestly:**
+
+_________________________________________________________________
+
+### 7.4 Match: Pitfalls to Solutions
+
+Match each pitfall to its solution:
+
+**Pitfalls:**
+a) Confusing statistical with practical significance
+b) Overinterpreting non-significant results
+c) Ignoring confidence interval width
+d) Assuming causation from correlation
+
+**Solutions:**
+1. Always report and discuss effect sizes
+2. Check for confounders; need experimental design
+3. Acknowledge uncertainty; consider power
+4. Comment on CI width/precision
+
+Matches: a = _____, b = _____, c = _____, d = _____
+
+# AI Exercises
+
+**Tips for Working with Claude:**
+
+- Ask for **R code using only tidyverse** (no other packages)
+- Request **simple, focused answers** to your specific question—not complex analyses
+- Ask Claude to **explain what the code is doing** since you're learning
+- Avoid asking for visualizations or plots in these exercises
+- Include the output of `glimpse()` in your prompt so Claude knows your variable names
+
+**Example prompt:** "Using tidyverse in R, run a regression of test_score on spending_per_student, then use confint() to get the 95% confidence interval. Explain what the confidence interval tells us about the spending effect. Keep the code simple and explain what each line does. Here is what my data looks like: [paste glimpse output]"
+
+## 8. Education and Test Scores
+
+**Dataset: data/education_spending.csv**
+
+Education spending and test score data to practice confidence intervals.
+
+```{r}
+# Load the dataset
+education_data <- read_csv("data/education_spending.csv")
+
+# Examine the data
+glimpse(education_data)
+```
+
+**Variables**:
+
+- `district_id`: Unique district identifier (int, 1-100)
+- `spending_per_student`: Per-student spending in dollars (dbl)
+- `test_score`: Average district test score (dbl)
+
+**Work with Claude to:**
+
+1. Run the regression and examine output
+2. Calculate 95% confidence intervals using `confint()`
+3. Interpret the confidence interval for spending
+4. Discuss whether the interval is narrow or wide
+5. Write a complete results section
+
+```{r}
+
+```
+
+## 9. Campaign Spending Analysis
+
+**Dataset: data/campaign_spending.csv**
+
+Campaign spending with multiple predictors.
+
+```{r}
+# Load the dataset
+campaign_data <- read_csv("data/campaign_spending.csv")
+
+# Examine the data
+glimpse(campaign_data)
+
+```
+
+**Variables**:
+
+- `candidate_id`: Unique candidate identifier (int, 1-200)
+- `campaign_spending`: Campaign spending in thousands of dollars (dbl)
+- `incumbent`: Incumbent status (int: 0 = challenger, 1 = incumbent)
+- `vote_share`: Vote share percentage (dbl)
+
+**Ask Claude to help:**
+
+1. Get confidence intervals for all coefficients
+2. Interpret each CI substantively
+3. Write up results following best practices
+
+```{r}
+
+```
+
+## 10. Comparing Sample Sizes
+
+**Datasets: data/voter_turnout_small.csv & data/voter_turnout_large.csv**
+
+Demonstrate the effect of sample size on CI width.
+
+```{r}
+# Load small sample dataset
+voter_study_small <- read_csv("data/voter_turnout_small.csv")
+glimpse(voter_study_small)
+
+# Load large sample dataset
+voter_study_large <- read_csv("data/voter_turnout_large.csv")
+glimpse(voter_study_large)
+
+```
+
+**Variables** (both datasets):
+
+- `precinct_id`: Unique precinct identifier (int)
+- `canvassing_contacts`: Number of canvassing contacts (int)
+- `turnout_pct`: Voter turnout percentage (dbl)
+
+**Work with Claude to:**
+
+1. Compare the point estimates from both models
+2. Compare the standard errors
+3. Compare the 95% confidence intervals
+
+```{r}
+
+```
+
+## 11. Multiple Confidence Levels
+
+**Dataset: data/public_opinion.csv**
+
+The same model reported at three different confidence levels.
+
+```{r}
+# Load the dataset
+opinion_data <- read_csv("data/public_opinion.csv")
+
+# Examine the data
+glimpse(opinion_data)
+```
+
+**Variables**:
+
+- `respondent_id`: Unique respondent identifier (int, 1-150)
+- `age`: Age in years (dbl)
+- `education_years`: Years of education (dbl)
+- `policy_support`: Policy support score (dbl: 0-100 scale)
+
+**Work with Claude to:**
+
+1. Fit `policy_support ~ age + education_years`
+2. Get the 90%, 95%, and 99% CI for the `age` coefficient using `confint(..., level = )`
+3. Explain what happens to the width as the confidence level rises, and why
+4. Decide which level you would report, and justify it
+
+```{r}
+
+```
+
+## 12. Writing Practice
+
+Using the education model from Exercise 8, write a complete results paragraph.
+
+**Work with Claude to:**
+
+1. Pull the coefficient, CI, t-statistic, and p-value into one place
+2. Draft a paragraph that follows the six-step template: direction and significance, statistics, effect size, precision, practical meaning, context
+3. Check your draft against the "what NOT to do" list — no causal language, no "95% probability" phrasing, no numbers without interpretation
+
+```{r}
+
+```
+
+## 13. Simulation: Understanding "95% Confident"
+
+No dataset — you will simulate one.
+
+**Work with Claude to:**
+
+1. Write a function that draws one sample, fits a regression, and returns the 95% CI for the slope
+2. Run it 100 times against a known true slope
+3. Count how many of the 100 intervals contain the true value
+4. Explain how this simulation illustrates what "95% confident" actually means
+
+```{r}
+
+```
+
+## 14. Critical Values Practice
+
+No dataset — this one is about `qt()`.
+
+**Work with Claude to:**
+
+1. Build a table of critical values for n = 10, 30, 100, and 1000 at the 90%, 95%, and 99% levels
+2. Explain why the probability passed to `qt()` is (1 + level) / 2 rather than the level itself
+3. Describe what happens to the critical value as df grows, and what it converges to
+
+```{r}
+
+```
+
+## 15. Common Pitfalls Investigation
+
+**Dataset: data/large_sample_study.csv**
+
+A very large study of a very small effect.
+
+```{r}
+# Load the dataset
+large_sample <- read_csv("data/large_sample_study.csv")
+
+# Examine the data
+glimpse(large_sample)
+```
+
+**Variables**:
+
+- `person_id`: Unique person identifier (int, 1-10000)
+- `intervention`: Treatment assignment (dbl: 0 = control, 1 = treated)
+- `outcome`: Outcome measure (dbl: 0-100 scale)
+
+**Work with Claude to:**
+
+1. Fit `outcome ~ intervention` and get the coefficient, p-value, and CI
+2. Express the effect as a percentage change from the control-group baseline
+3. Explain how a result can be highly significant and still not matter
+
+```{r}
+
+```
+
+## 16. Complete Analysis Project
+
+Choose any dataset from this exercise and produce a complete analysis.
+
+**Your write-up should demonstrate:**
+
+1. A clearly stated question and an appropriate model
+2. A correctly calculated confidence interval
+3. A clear interpretation of the coefficient
+4. A comment on precision (CI width)
+5. Discussion of both statistical and practical significance
+6. A write-up that follows the reporting template
+
+```{r}
+
+```
+
+\newpage
